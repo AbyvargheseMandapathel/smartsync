@@ -1,0 +1,33 @@
+.layout-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+}
+
+.container-default {
+    max-width: 1280px;
+}
+
+.container-small {
+    max-width: 768px;
+}
+
+.container-large {
+    max-width: 1440px;
+}
+
+.container-full {
+    max-width: 100%;
+}
+
+@media (min-width: 768px) {
+    .layout-container {
+        padding: 0 var(--space-6);
+    }
+}
+
+@media (min-width: 1024px) {
+    .layout-container {
+        padding: 0 var(--space-8);
+    }
+}

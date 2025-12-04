@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { signup } from '../../api/api';
+import { motion } from 'framer-motion';
+import { IoMail, IoLockClosed, IoPerson, IoLogoGoogle, IoLogoFacebook } from 'react-icons/io5';
 import Headerone from '../../components/Header/Headerone';
+import Input from '../../components/UI/Input';
+import Button from '../../components/UI/Button';
+import Card from '../../components/UI/Card';
+import AnimatedBackground from '../../components/UI/AnimatedBackground';
+import { signup } from '../../api/api';
 import './Signup.css';
 
 const Signup = () => {
@@ -11,7 +17,7 @@ const Signup = () => {
         password: '',
         confirmPassword: '',
     });
-    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -20,107 +26,135 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
         if (formData.password !== formData.confirmPassword) {
-            setError("Passwords don't match!");
+            alert("Passwords don't match!");
             return;
         }
 
+        setLoading(true);
+
         try {
-            // Djoser expects re_password instead of confirmPassword
-            const payload = {
+            await signup({
                 username: formData.username,
                 email: formData.email,
                 password: formData.password,
                 re_password: formData.confirmPassword
-            };
+            });
 
-            const response = await signup(payload);
-            console.log('Signup Success:', response.data);
-            // Redirect to login after successful signup
+            alert('Account created successfully! Please log in.');
             navigate('/login');
-        } catch (err) {
-            console.error('Signup Error:', err);
-            if (err.response && err.response.data) {
-                // Display first error message found
-                const errorData = err.response.data;
-                let errorMessage = 'Signup failed. Please try again.';
-
-                // Check for specific field errors
-                if (errorData.username) errorMessage = `Username: ${errorData.username[0]}`;
-                else if (errorData.email) errorMessage = `Email: ${errorData.email[0]}`;
-                else if (errorData.password) errorMessage = `Password: ${errorData.password[0]}`;
-                else if (errorData.non_field_errors) errorMessage = errorData.non_field_errors[0];
-                else {
-                    // Fallback to first available error
-                    const firstError = Object.values(errorData)[0];
-                    if (Array.isArray(firstError)) errorMessage = firstError[0];
-                    else if (typeof firstError === 'string') errorMessage = firstError;
-                }
-                setError(errorMessage);
+            setLoading(false);
+        } catch (error) {
+            console.error('Signup error:', error);
+            if (error.response && error.response.data) {
+                const errorMsg = Object.values(error.response.data).flat().join('\n');
+                alert(`Signup failed:\n${errorMsg}`);
             } else {
-                setError('Signup failed. Please check your connection.');
+                alert('Signup failed. Please try again.');
             }
+            setLoading(false);
         }
     };
 
     return (
         <>
             <Headerone />
-            <div className="signup-container">
-                <div className="signup-form-wrapper">
-                    <h2>Create an Account</h2>
-                    {error && <p className="error-message" style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="username">Username</label>
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                required
-                            />
+            <AnimatedBackground variant="gradient" />
+
+            <div className="signup-page">
+                <div className="signup-container-modern">
+                    <Card padding="large" className="signup-card">
+                        <div className="signup-header">
+                            <h1 className="signup-title">Create Account</h1>
+                            <p className="signup-subtitle">
+                                Join SmartSync and start ordering delicious food
+                            </p>
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="email">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="confirmPassword">Confirm Password</label>
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <button type="submit" className="signup-btn">Sign Up</button>
-                    </form>
-                    <p className="login-link">
-                        Already have an account? <Link to="/login">Login</Link>
-                    </p>
+
+                        <form onSubmit={handleSubmit} className="signup-form">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.4 }}
+                                className="form-fields"
+                            >
+                                <Input
+                                    label="Username"
+                                    type="text"
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    icon={<IoPerson />}
+                                    required
+                                />
+                                <Input
+                                    label="Email Address"
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    icon={<IoMail />}
+                                    required
+                                />
+                                <Input
+                                    label="Password"
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    icon={<IoLockClosed />}
+                                    required
+                                />
+                                <Input
+                                    label="Confirm Password"
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    icon={<IoLockClosed />}
+                                    required
+                                />
+                            </motion.div>
+
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                size="large"
+                                fullWidth
+                                loading={loading}
+                            >
+                                Create Account
+                            </Button>
+
+                            <div className="divider">
+                                <span>OR CONTINUE WITH</span>
+                            </div>
+
+                            <div className="social-login">
+                                <Button
+                                    variant="outline"
+                                    icon={<IoLogoGoogle />}
+                                    className="social-btn"
+                                >
+                                    Google
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    icon={<IoLogoFacebook />}
+                                    className="social-btn"
+                                >
+                                    Facebook
+                                </Button>
+                            </div>
+                        </form>
+
+                        <p className="login-prompt">
+                            Already have an account?{' '}
+                            <Link to="/login" className="login-link-text">
+                                Sign in
+                            </Link>
+                        </p>
+                    </Card>
                 </div>
             </div>
         </>

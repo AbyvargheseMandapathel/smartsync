@@ -1,34 +1,17 @@
-import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { getHomeMessage } from './api/api';
-import './App.css'
+import './App.css';
+import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Signup from './pages/Signup/Signup';
-import Headerone from './components/Header/Headerone';
-
-function Home() {
-  const [message, setMessage] = useState('')
-
-  useEffect(() => {
-    getHomeMessage()
-      .then(response => {
-        setMessage(response.data)
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error)
-      })
-  }, [])
-
-  return (
-    <>
-      <Headerone />
-      <div className="home-container" style={{ padding: '2rem', textAlign: 'center' }}>
-        <h1>Welcome to SmartSync</h1>
-        <p>Backend says: {message}</p>
-      </div>
-    </>
-  )
-}
+import UserDashboard from './pages/Dashboard/UserDashboard';
+import UserStats from './pages/Dashboard/UserStats';
+import UserOrders from './pages/Dashboard/UserOrders';
+import DeliveryAddress from './pages/Dashboard/DeliveryAddress';
+import RestaurantDetails from './pages/Dashboard/RestaurantDetails';
+import RestaurantDashboard from './pages/Dashboard/RestaurantDashboard';
+import MenuManagement from './pages/Restaurant/MenuManagement';
+import RestaurantManagement from './pages/Restaurant/RestaurantManagement';
+import RestaurantOrders from './pages/Restaurant/RestaurantOrders';
 
 function App() {
   return (
@@ -37,9 +20,18 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/user/dashboard" element={<UserDashboard />} />
+        <Route path="/user/stats" element={<UserStats />} />
+        <Route path="/user/orders" element={<UserOrders />} />
+        <Route path="/user/checkout" element={<DeliveryAddress />} />
+        <Route path="/restaurant/:id" element={<RestaurantDetails />} />
+        <Route path="/restaurant/dashboard" element={<RestaurantDashboard />} />
+        <Route path="/restaurant/menu" element={<MenuManagement />} />
+        <Route path="/restaurant/profile" element={<RestaurantManagement />} />
+        <Route path="/restaurant/orders" element={<RestaurantOrders />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

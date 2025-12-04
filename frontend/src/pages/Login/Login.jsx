@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../../api/api';
+import { motion } from 'framer-motion';
+import { IoPerson, IoLockClosed, IoLogoGoogle, IoLogoFacebook } from 'react-icons/io5';
 import Headerone from '../../components/Header/Headerone';
+import Input from '../../components/UI/Input';
+import Button from '../../components/UI/Button';
+import Card from '../../components/UI/Card';
+import AnimatedBackground from '../../components/UI/AnimatedBackground';
+import { login, getMe } from '../../api/api';
 import './Login.css';
 
 const Login = () => {
@@ -9,7 +15,7 @@ const Login = () => {
         username: '',
         password: '',
     });
-    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -18,58 +24,165 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setLoading(true);
+
         try {
             const response = await login(formData);
-            console.log('Login Success:', response.data);
-            localStorage.setItem('access', response.data.access);
-            localStorage.setItem('refresh', response.data.refresh);
-            navigate('/');
-        } catch (err) {
-            console.error('Login Error:', err);
-            if (err.response && err.response.data) {
-                setError(err.response.data.detail || 'Invalid username or password.');
+            const { access, refresh } = response.data;
+
+            localStorage.setItem('accessToken', access);
+            localStorage.setItem('refreshToken', refresh);
+
+            // Fetch user profile to get role
+            const userResponse = await getMe();
+            const userType = userResponse.data.user_type;
+
+            if (userType === 'RESTAURANT') {
+                navigate('/restaurant/dashboard');
             } else {
-                setError('Login failed. Please check your connection.');
+                navigate('/user/dashboard');
             }
+
+            setLoading(false);
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed. Please check your credentials.');
+            setLoading(false);
         }
     };
 
     return (
         <>
             <Headerone />
-            <div className="login-container">
-                <div className="login-form-wrapper">
-                    <h2>Login to SmartSync</h2>
-                    {error && <p className="error-message" style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="username">Username</label>
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                required
-                            />
+            <AnimatedBackground variant="gradient" />
+
+            <div className="login-page">
+                <div className="login-container-modern">
+                    {/* Left Side - Form */}
+                    <motion.div
+                        className="login-form-section"
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <Card padding="large" className="login-card">
+                            <div className="login-header">
+                                <h1 className="login-title">Welcome Back!</h1>
+                                <p className="login-subtitle">
+                                    Sign in to continue to SmartSync
+                                </p>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="login-form">
+                                <Input
+                                    label="Username"
+                                    type="text"
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    icon={<IoPerson />}
+                                    required
+                                />
+
+                                <Input
+                                    label="Password"
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    icon={<IoLockClosed />}
+                                    required
+                                />
+
+                                <div className="form-extras">
+                                    <label className="remember-me">
+                                        <input type="checkbox" />
+                                        <span>Remember me</span>
+                                    </label>
+                                    <Link to="/forgot-password" className="forgot-link">
+                                        Forgot Password?
+                                    </Link>
+                                </div>
+
+                                <Button
+                                    type="submit"
+                                    variant="primary"
+                                    size="large"
+                                    fullWidth
+                                    loading={loading}
+                                >
+                                    Sign In
+                                </Button>
+                            </form>
+
+                            <div className="divider">
+                                <span>OR CONTINUE WITH</span>
+                            </div>
+
+                            <div className="social-login">
+                                <Button
+                                    variant="outline"
+                                    icon={<IoLogoGoogle />}
+                                    className="social-btn"
+                                >
+                                    Google
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    icon={<IoLogoFacebook />}
+                                    className="social-btn"
+                                >
+                                    Facebook
+                                </Button>
+                            </div>
+
+                            <p className="signup-prompt">
+                                Don't have an account?{' '}
+                                <Link to="/signup" className="signup-link-text">
+                                    Sign up now
+                                </Link>
+                            </p>
+                        </Card>
+                    </motion.div>
+
+                    {/* Right Side - Illustration */}
+                    <motion.div
+                        className="login-illustration-section"
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                    >
+                        <div className="illustration-content">
+                            <motion.div
+                                className="floating-emoji"
+                                animate={{ y: [-10, 10, -10] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                            >
+                                🍕
+                            </motion.div>
+                            <motion.div
+                                className="floating-emoji"
+                                style={{ top: '30%', right: '20%' }}
+                                animate={{ y: [10, -10, 10] }}
+                                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                            >
+                                🍔
+                            </motion.div>
+                            <motion.div
+                                className="floating-emoji"
+                                style={{ bottom: '20%', left: '15%' }}
+                                animate={{ y: [-15, 15, -15] }}
+                                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                            >
+                                🍜
+                            </motion.div>
+
+                            <div className="illustration-text">
+                                <h2>Order Your Favorite Food</h2>
+                                <p>Join thousands of food lovers and restaurants on SmartSync</p>
+                            </div>
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <button type="submit" className="login-btn">Login</button>
-                    </form>
-                    <p className="signup-link">
-                        Don't have an account? <Link to="/signup">Sign up</Link>
-                    </p>
+                    </motion.div>
                 </div>
             </div>
         </>

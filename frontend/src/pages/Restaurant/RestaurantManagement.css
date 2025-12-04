@@ -1,0 +1,38 @@
+.management-header {
+    margin-bottom: var(--space-8);
+}
+
+.management-content {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-form-card {
+    width: 100%;
+    max-width: 600px;
+}
+
+.textarea-input-with-icon {
+    width: 100%;
+    padding: var(--space-3);
+    padding-left: var(--space-10);
+    /* Space for icon */
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    min-height: 100px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: var(--space-3);
+    top: var(--space-3);
+    color: var(--gray-400);
+    font-size: var(--text-lg);
+    pointer-events: none;
+}

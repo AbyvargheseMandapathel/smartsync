@@ -1,0 +1,160 @@
+.back-btn {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-base);
+    color: var(--gray-600);
+    cursor: pointer;
+    margin-bottom: var(--space-4);
+}
+
+.restaurant-banner {
+    background: white;
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-6);
+    box-shadow: var(--shadow-sm);
+}
+
+.restaurant-details-header h1 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-3xl);
+}
+
+.meta-info {
+    display: flex;
+    gap: var(--space-4);
+    color: var(--gray-600);
+    font-size: var(--text-sm);
+}
+
+.rating {
+    background: var(--success-600);
+    color: white;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-bottom: 80px;
+    /* Space for floating cart */
+}
+
+.menu-item-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: white;
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-100);
+}
+
+.item-info h3 {
+    margin: var(--space-1) 0;
+    font-size: var(--text-lg);
+}
+
+.type-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.type-indicator.veg {
+    background: var(--success-500);
+    border: 2px solid var(--success-200);
+}
+
+.type-indicator.non-veg {
+    background: var(--error-500);
+    border: 2px solid var(--error-200);
+}
+
+.price {
+    font-weight: 600;
+    color: var(--gray-900);
+    margin: var(--space-1) 0;
+}
+
+.description {
+    color: var(--gray-500);
+    font-size: var(--text-sm);
+    margin: 0;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--primary-50);
+    padding: 4px 8px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--primary-200);
+}
+
+.quantity-control button {
+    background: none;
+    border: none;
+    color: var(--primary-700);
+    font-weight: 700;
+    cursor: pointer;
+    font-size: var(--text-lg);
+}
+
+.cart-floating-bar {
+    position: fixed;
+    bottom: var(--space-6);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    background: var(--primary-600);
+    color: white;
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-xl);
+    z-index: 100;
+}
+
+.cart-summary {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-count {
+    font-size: var(--text-xs);
+    opacity: 0.9;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.total-price {
+    font-size: var(--text-lg);
+    font-weight: 700;
+}
+
+.place-order-btn {
+    background: white;
+    color: var(--primary-700);
+    border: none;
+    padding: var(--space-2) var(--space-6);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
