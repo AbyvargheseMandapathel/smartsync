@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import axios from 'axios'
+import { getHomeMessage } from './api/api';
 import './App.css'
 import Login from './pages/Login/Login';
 import Signup from './pages/Signup/Signup';
@@ -10,7 +10,7 @@ function Home() {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/')
+    getHomeMessage()
       .then(response => {
         setMessage(response.data)
       })

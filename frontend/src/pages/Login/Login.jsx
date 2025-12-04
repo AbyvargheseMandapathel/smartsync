@@ -1,22 +1,38 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../../api/api';
 import Headerone from '../../components/Header/Headerone';
 import './Login.css';
 
 const Login = () => {
     const [formData, setFormData] = useState({
-        email: '',
+        username: '',
         password: '',
     });
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Login Data:', formData);
-        // Add login logic here
+        setError('');
+        try {
+            const response = await login(formData);
+            console.log('Login Success:', response.data);
+            localStorage.setItem('access', response.data.access);
+            localStorage.setItem('refresh', response.data.refresh);
+            navigate('/');
+        } catch (err) {
+            console.error('Login Error:', err);
+            if (err.response && err.response.data) {
+                setError(err.response.data.detail || 'Invalid username or password.');
+            } else {
+                setError('Login failed. Please check your connection.');
+            }
+        }
     };
 
     return (
@@ -25,14 +41,15 @@ const Login = () => {
             <div className="login-container">
                 <div className="login-form-wrapper">
                     <h2>Login to SmartSync</h2>
+                    {error && <p className="error-message" style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="email">Email</label>
+                            <label htmlFor="username">Username</label>
                             <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
+                                type="text"
+                                id="username"
+                                name="username"
+                                value={formData.username}
                                 onChange={handleChange}
                                 required
                             />
