@@ -3,7 +3,8 @@ import { IoStatsChart, IoRestaurant, IoTime, IoWallet } from 'react-icons/io5';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import StatsCard from '../../components/Dashboard/StatsCard';
 import OrderList from '../../components/Dashboard/OrderList';
-import { getOrders, getCookingRecommendation } from '../../api/api';
+import Modal from '../../components/UI/Modal';
+import { getOrders, getCookingRecommendation, updateOrder } from '../../api/api';
 import './Dashboard.css';
 
 const RestaurantDashboard = () => {
@@ -16,17 +17,78 @@ const RestaurantDashboard = () => {
         { title: 'Total Orders', value: '0', icon: <IoStatsChart />, trend: 0, color: 'primary' },
     ]);
 
+    const [modalConfig, setModalConfig] = useState({
+        isOpen: false,
+        title: '',
+        content: null
+    });
+
     const handleGetAdvice = async (orderId) => {
         try {
             setLoadingOrderId(orderId);
             const response = await getCookingRecommendation(orderId);
-            alert(`Cooking Advice: ${response.data.recommendation}`);
+            setModalConfig({
+                isOpen: true,
+                title: 'Cooking Advice',
+                content: response.data.recommendation
+            });
         } catch (error) {
             console.error('Error fetching advice:', error);
-            alert('Failed to get cooking advice.');
+            setModalConfig({
+                isOpen: true,
+                title: 'Error',
+                content: 'Failed to get cooking advice.'
+            });
         } finally {
             setLoadingOrderId(null);
         }
+    };
+
+    const handleStatusUpdate = async (orderId, newStatus) => {
+        try {
+            setLoading(true);
+            await updateOrder(orderId, { status: newStatus });
+            closeModal();
+            fetchData(); // Refresh data
+        } catch (error) {
+            console.error('Error updating status:', error);
+            alert('Failed to update status');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStatusChange = (orderId, currentStatus) => {
+        const statuses = ['PENDING', 'PREPARING', 'READY', 'DELIVERED', 'CANCELLED'];
+
+        const content = (
+            <div className="status-selection">
+                <p>Current Status: <strong>{currentStatus}</strong></p>
+                <p>Select new status:</p>
+                <div className="status-buttons">
+                    {statuses.map(status => (
+                        <button
+                            key={status}
+                            className={`status-btn ${status.toLowerCase() === currentStatus.toLowerCase() ? 'active' : ''}`}
+                            onClick={() => handleStatusUpdate(orderId, status)}
+                            disabled={status === currentStatus}
+                        >
+                            {status}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        );
+
+        setModalConfig({
+            isOpen: true,
+            title: 'Update Order Status',
+            content: content
+        });
+    };
+
+    const closeModal = () => {
+        setModalConfig(prev => ({ ...prev, isOpen: false }));
     };
 
     useEffect(() => {
@@ -88,9 +150,19 @@ const RestaurantDashboard = () => {
                     onAction={handleGetAdvice}
                     actionLabel="Get Cooking Advice"
                     loadingOrderId={loadingOrderId}
+                    onStatusChange={handleStatusChange}
                 />
             </div>
-        </DashboardLayout>
+
+
+            <Modal
+                isOpen={modalConfig.isOpen}
+                onClose={closeModal}
+                title={modalConfig.title}
+            >
+                {modalConfig.content}
+            </Modal>
+        </DashboardLayout >
     );
 };
 

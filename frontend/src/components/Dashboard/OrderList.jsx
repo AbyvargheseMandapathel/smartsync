@@ -2,7 +2,7 @@ import React from 'react';
 import Card from '../UI/Card';
 import './OrderList.css';
 
-const OrderList = ({ orders, title = "Recent Orders", onAction, actionLabel, loadingOrderId }) => {
+const OrderList = ({ orders, title = "Recent Orders", onAction, actionLabel, loadingOrderId, onStatusChange }) => {
     return (
         <Card className="order-list-card">
             <div className="order-list-header">
@@ -30,7 +30,12 @@ const OrderList = ({ orders, title = "Recent Orders", onAction, actionLabel, loa
                                 <td className="order-items">{order.items} items</td>
                                 <td className="order-total">${order.total}</td>
                                 <td>
-                                    <span className={`status-badge ${order.status.toLowerCase()}`}>
+                                    <span
+                                        className={`status-badge ${order.status.toLowerCase()}`}
+                                        onClick={() => onStatusChange && onStatusChange(order.id, order.status)}
+                                        style={{ cursor: onStatusChange ? 'pointer' : 'default' }}
+                                        title={onStatusChange ? "Click to change status" : ""}
+                                    >
                                         {order.status}
                                     </span>
                                 </td>

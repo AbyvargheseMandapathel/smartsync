@@ -40,7 +40,7 @@ def get_cooking_recommendation(order_id):
         Explain your reasoning briefly.
         """
 
-        api_key = "AIzaSyDNwaBW-LXzu2-3AHItysu87sECZUCaaFI"
+        api_key = "AIzaSyDNwaBW-LXzu2-3AHItysu87sECZ"
         if not api_key:
             return "Error: GEMINI_API_KEY not set."
 
