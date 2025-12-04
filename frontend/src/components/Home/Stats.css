@@ -1,0 +1,62 @@
+/* Stats Section */
+.stats-section {
+    padding: var(--space-20) 0;
+    background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: rotate3D 20s linear infinite;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-8);
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card {
+    text-align: center;
+    color: white;
+}
+
+.stat-value {
+    font-size: var(--text-6xl);
+    font-family: var(--font-display);
+    font-weight: 900;
+    margin-bottom: var(--space-2);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stat-label {
+    font-size: var(--text-lg);
+    opacity: 0.95;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+    }
+
+    .stat-value {
+        font-size: var(--text-4xl);
+    }
+}

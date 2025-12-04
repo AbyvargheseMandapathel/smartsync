@@ -1,0 +1,77 @@
+.animated-bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.animated-bg-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fff7ed 0%, #fef2f2 100%);
+}
+
+.gradient-blob {
+    position: absolute;
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+}
+
+.blob-1 {
+    width: 500px;
+    height: 500px;
+    top: -100px;
+    left: -100px;
+    background: linear-gradient(135deg, #fb923c, #f97316);
+}
+
+.blob-2 {
+    width: 600px;
+    height: 600px;
+    bottom: -150px;
+    right: -150px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.blob-3 {
+    width: 400px;
+    height: 400px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .blob-1,
+    .blob-2,
+    .blob-3 {
+        filter: blur(60px);
+    }
+
+    .blob-1 {
+        width: 300px;
+        height: 300px;
+    }
+
+    .blob-2 {
+        width: 350px;
+        height: 350px;
+    }
+
+    .blob-3 {
+        width: 250px;
+        height: 250px;
+    }
+}
