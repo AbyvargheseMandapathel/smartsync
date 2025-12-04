@@ -127,6 +127,7 @@ const RestaurantDashboard = () => {
         items: order.items.length,
         total: order.total_amount,
         status: order.status,
+        createdAt: order.created_at,
         date: new Date(order.created_at).toLocaleDateString() + ', ' + new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }));
 

@@ -100,3 +100,7 @@
     background: var(--error-50);
     color: var(--error-700);
 }
+.status-badge.start {
+    background: var(--primary-50);
+    color: var(--primary-700);
+}
