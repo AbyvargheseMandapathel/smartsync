@@ -25,9 +25,14 @@ The **Smart Cooking Advice** feature is designed to optimize kitchen operations 
 ### Dashboard View
 The dashboard provides a clear, real-time view of all orders. The status highlights when to start cooking, accompanied by a dynamic countdown.
 
-![Dashboard with Countdown](C:/Users/ww/.gemini/antigravity/brain/bb545eda-8399-4689-a774-9f0783c33321/uploaded_image_0_1764866407913.png)
+![Dashboard with Countdown]
+<img width="1600" height="803" alt="image" src="https://github.com/user-attachments/assets/1e649b54-741c-49b0-9b78-ff34a2f3fa8d" />
+
+
 
 ### Detailed Advice
 Clicking "Get Cooking Advice" (or viewing the automatic status) reveals the reasoning behind the recommendation, giving chefs confidence in the system's timing.
 
-![Cooking Advice Modal](C:/Users/ww/.gemini/antigravity/brain/bb545eda-8399-4689-a774-9f0783c33321/uploaded_image_1_1764866407913.png)
+![Cooking Advice Modal]
+<img width="1600" height="821" alt="image" src="https://github.com/user-attachments/assets/d38d41fe-c126-4848-92e3-09189d3db34b" />
+
