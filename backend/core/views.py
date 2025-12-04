@@ -51,3 +51,47 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(customer=self.request.user)
+
+from .models import Favourite
+from .serializers import FavouriteSerializer
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+
+class FavouriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavouriteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Favourite.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['post'])
+    def toggle(self, request):
+        restaurant_id = request.data.get('restaurant_id')
+        if not restaurant_id:
+            return Response({'error': 'restaurant_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            restaurant = Restaurant.objects.get(id=restaurant_id)
+        except Restaurant.DoesNotExist:
+            return Response({'error': 'Restaurant not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        favourite, created = Favourite.objects.get_or_create(user=request.user, restaurant=restaurant)
+
+        if not created:
+            favourite.delete()
+            return Response({'status': 'removed', 'restaurant_id': restaurant_id}, status=status.HTTP_200_OK)
+        
+        serializer = self.get_serializer(favourite)
+        return Response({'status': 'added', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+
+from .gemini_service import get_cooking_recommendation
+from rest_framework.decorators import api_view
+
+@api_view(['POST'])
+def recommend_cooking_time(request, order_id):
+    recommendation = get_cooking_recommendation(order_id)
+    return Response({'recommendation': recommendation})

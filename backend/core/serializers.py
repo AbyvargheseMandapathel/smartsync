@@ -69,3 +69,22 @@ class OrderSerializer(serializers.ModelSerializer):
         order.total_amount = total
         order.save()
         return order
+
+from .models import Favourite
+
+class FavouriteSerializer(serializers.ModelSerializer):
+    restaurant_name = serializers.CharField(source='restaurant.name', read_only=True)
+    restaurant_image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Favourite
+        fields = ['id', 'user', 'restaurant', 'restaurant_name', 'restaurant_image', 'created_at']
+        read_only_fields = ['user', 'created_at']
+
+    def get_restaurant_image(self, obj):
+        # Placeholder for restaurant image logic
+        return None
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

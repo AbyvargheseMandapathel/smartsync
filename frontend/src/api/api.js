@@ -84,4 +84,17 @@ export const updateOrder = (id, data) => {
     return api.patch(`orders/${id}/`, data);
 };
 
+// Favourites API
+export const getFavourites = () => {
+    return api.get('favourites/');
+};
+
+export const toggleFavourite = (restaurantId) => {
+    return api.post('favourites/toggle/', { restaurant_id: restaurantId });
+};
+
+export const getCookingRecommendation = (orderId) => {
+    return api.post(`orders/${orderId}/recommend-cooking-time/`);
+};
+
 export default api;

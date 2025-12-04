@@ -3,17 +3,31 @@ import { IoStatsChart, IoRestaurant, IoTime, IoWallet } from 'react-icons/io5';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import StatsCard from '../../components/Dashboard/StatsCard';
 import OrderList from '../../components/Dashboard/OrderList';
-import { getOrders } from '../../api/api';
+import { getOrders, getCookingRecommendation } from '../../api/api';
 import './Dashboard.css';
 
 const RestaurantDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingOrderId, setLoadingOrderId] = useState(null);
     const [stats, setStats] = useState([
         { title: 'Total Earnings', value: '₹0', icon: <IoWallet />, trend: 0, color: 'success' },
         { title: 'Active Orders', value: '0', icon: <IoRestaurant />, trend: 0, color: 'primary' },
         { title: 'Total Orders', value: '0', icon: <IoStatsChart />, trend: 0, color: 'primary' },
     ]);
+
+    const handleGetAdvice = async (orderId) => {
+        try {
+            setLoadingOrderId(orderId);
+            const response = await getCookingRecommendation(orderId);
+            alert(`Cooking Advice: ${response.data.recommendation}`);
+        } catch (error) {
+            console.error('Error fetching advice:', error);
+            alert('Failed to get cooking advice.');
+        } finally {
+            setLoadingOrderId(null);
+        }
+    };
 
     useEffect(() => {
         fetchData();
@@ -68,7 +82,13 @@ const RestaurantDashboard = () => {
             </div>
 
             <div className="dashboard-section">
-                <OrderList orders={formattedOrders} title="Recent Orders" />
+                <OrderList
+                    orders={formattedOrders}
+                    title="Recent Orders"
+                    onAction={handleGetAdvice}
+                    actionLabel="Get Cooking Advice"
+                    loadingOrderId={loadingOrderId}
+                />
             </div>
         </DashboardLayout>
     );

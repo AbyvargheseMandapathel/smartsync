@@ -20,6 +20,9 @@ class CustomUser(AbstractUser):
         default=USER,
     )
 
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
+
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='customuser_set',
@@ -48,6 +51,8 @@ class Restaurant(models.Model):
     name = models.CharField(max_length=255)
     address = models.TextField()
     phone_number = models.CharField(max_length=20)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
     
     def __str__(self):
         return self.name
@@ -106,3 +111,14 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity}x {self.menu_item.name} in Order #{self.order.id}"
+
+class Favourite(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='favourites')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='favourited_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'restaurant')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.restaurant.name}"

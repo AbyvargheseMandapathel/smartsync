@@ -2,7 +2,7 @@ import React from 'react';
 import Card from '../UI/Card';
 import './OrderList.css';
 
-const OrderList = ({ orders, title = "Recent Orders" }) => {
+const OrderList = ({ orders, title = "Recent Orders", onAction, actionLabel, loadingOrderId }) => {
     return (
         <Card className="order-list-card">
             <div className="order-list-header">
@@ -19,6 +19,7 @@ const OrderList = ({ orders, title = "Recent Orders" }) => {
                             <th>Total</th>
                             <th>Status</th>
                             <th>Date</th>
+                            {onAction && <th>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -34,6 +35,18 @@ const OrderList = ({ orders, title = "Recent Orders" }) => {
                                     </span>
                                 </td>
                                 <td className="order-date">{order.date}</td>
+                                {onAction && (
+                                    <td>
+                                        <button
+                                            className="action-btn"
+                                            onClick={() => onAction(order.id)}
+                                            disabled={loadingOrderId === order.id}
+                                            style={{ opacity: loadingOrderId === order.id ? 0.7 : 1, cursor: loadingOrderId === order.id ? 'not-allowed' : 'pointer' }}
+                                        >
+                                            {loadingOrderId === order.id ? 'Loading...' : (actionLabel || 'Action')}
+                                        </button>
+                                    </td>
+                                )}
                             </tr>
                         ))}
                     </tbody>

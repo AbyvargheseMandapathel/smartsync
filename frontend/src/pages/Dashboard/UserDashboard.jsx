@@ -1,27 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { IoSearch, IoLocationSharp, IoPersonCircle, IoHeart, IoTime, IoRestaurant } from 'react-icons/io5';
+import { IoSearch, IoLocationSharp, IoPersonCircle, IoHeart, IoHeartOutline, IoTime, IoRestaurant } from 'react-icons/io5';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import Card from '../../components/UI/Card';
-import { getRestaurants } from '../../api/api';
+import { getRestaurants, getFavourites, toggleFavourite } from '../../api/api';
 import './Dashboard.css';
 
 const UserDashboard = () => {
     const [restaurants, setRestaurants] = useState([]);
+    const [favourites, setFavourites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [showFavouritesOnly, setShowFavouritesOnly] = useState(false);
 
     useEffect(() => {
-        fetchRestaurants();
+        fetchData();
     }, []);
 
-    const fetchRestaurants = async () => {
+    const fetchData = async () => {
         try {
-            const response = await getRestaurants();
-            setRestaurants(response.data);
+            const [restaurantsRes, favouritesRes] = await Promise.all([
+                getRestaurants(),
+                getFavourites()
+            ]);
+            setRestaurants(restaurantsRes.data);
+            // Assuming favouritesRes.data is a list of favourite objects with restaurant field
+            setFavourites(favouritesRes.data.map(fav => fav.restaurant));
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching restaurants:', error);
+            console.error('Error fetching data:', error);
             setLoading(false);
+        }
+    };
+
+    const handleToggleFavourite = async (e, restaurantId) => {
+        e.stopPropagation();
+        try {
+            const response = await toggleFavourite(restaurantId);
+            if (response.data.status === 'added') {
+                setFavourites([...favourites, restaurantId]);
+            } else {
+                setFavourites(favourites.filter(id => id !== restaurantId));
+            }
+        } catch (error) {
+            console.error('Error toggling favourite:', error);
         }
     };
 
@@ -32,7 +53,8 @@ const UserDashboard = () => {
             item.name.toLowerCase().includes(query) ||
             item.ingredients.toLowerCase().includes(query)
         );
-        return nameMatch || menuMatch;
+        const isFavourite = showFavouritesOnly ? favourites.includes(restaurant.id) : true;
+        return (nameMatch || menuMatch) && isFavourite;
     });
 
     return (
@@ -60,6 +82,27 @@ const UserDashboard = () => {
                 </div>
             </div>
 
+            <div className="filter-section" style={{ padding: '0 20px', marginBottom: '10px' }}>
+                <button
+                    className={`filter-btn ${showFavouritesOnly ? 'active' : ''}`}
+                    onClick={() => setShowFavouritesOnly(!showFavouritesOnly)}
+                    style={{
+                        background: showFavouritesOnly ? '#ff4757' : '#f1f2f6',
+                        color: showFavouritesOnly ? 'white' : '#2f3542',
+                        border: 'none',
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontWeight: '500'
+                    }}
+                >
+                    <IoHeart /> My Favourites
+                </button>
+            </div>
+
             {/* Offers section disabled for now */}
 
             <div className="dashboard-section">
@@ -82,6 +125,31 @@ const UserDashboard = () => {
                                         <div className="delivery-time-badge">
                                             <IoTime /> 25 mins
                                         </div>
+                                        <button
+                                            className="favourite-btn"
+                                            onClick={(e) => handleToggleFavourite(e, restaurant.id)}
+                                            style={{
+                                                position: 'absolute',
+                                                top: '10px',
+                                                right: '10px',
+                                                background: 'white',
+                                                border: 'none',
+                                                borderRadius: '50%',
+                                                width: '30px',
+                                                height: '30px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                                            }}
+                                        >
+                                            {favourites.includes(restaurant.id) ? (
+                                                <IoHeart color="#ff4757" size={20} />
+                                            ) : (
+                                                <IoHeartOutline color="#2f3542" size={20} />
+                                            )}
+                                        </button>
                                     </div>
                                     <div className="restaurant-info">
                                         <h3>{restaurant.name}</h3>
